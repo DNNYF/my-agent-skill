@@ -25,9 +25,27 @@ Reads a codebase to understand what was actually built, then produces documentat
 
 ## Installation
 
+### 🤖 Install via Agent (Auto-Install Prompt)
+The easiest way to install these skills is to let your AI agent do it for you. Copy and paste the prompt below directly into your agent (OpenCode, Claude Code, Cline, or Cursor):
+
+```text
+Please install the agent skills from https://github.com/DNNYF/my-agent-skill.git 
+
+Instructions for the agent:
+1. Clone the repository to a temporary directory.
+2. If I am using OpenCode, copy the `product-architect`, `frontend-design/skill` (rename to `frontend-design`), and `project-documenter` folders into `~/.config/opencode/skills/`.
+3. If I am using Claude Code, copy them to `~/.claude/skills/`.
+4. If I am using Cursor/Cline, read the `SKILL.md` from each folder and append their contents to my `.cursorrules` or system prompt file.
+5. Confirm once the installation is complete and clean up the temporary directory.
+```
+
+---
+
+### 💻 Manual Installation
+
 These skills use progressive disclosure (a lean `SKILL.md` + detailed `references/` folder) to optimize context windows while providing deep knowledge when needed.
 
-### For OhMyOpenCode (Recommended)
+#### For OhMyOpenCode (Recommended)
 Copy the skill folders to your OpenCode skills directory:
 ```bash
 # User-level (available across all projects)
