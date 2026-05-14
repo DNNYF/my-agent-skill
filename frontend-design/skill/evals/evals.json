@@ -1,0 +1,59 @@
+{
+  "skill_name": "frontend-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Bikin landing page untuk app invoice tracker. Target user freelancer Indonesia. Harus ada hero section, fitur highlights (3 fitur utama), pricing section (free dan pro), sama footer. Pake Next.js + Tailwind. Jangan yang generic startup template ya, buat yang beda.",
+      "expected_output": "Should produce a design system first (colors, typography, spacing tokens), then build components consuming those tokens. Should NOT use default blue/purple SaaS colors. Should have a distinctive visual identity. Design system should use 3-level token architecture (raw > semantic > component). Should include animation tokens. Layout should use asymmetry or visual tension, not centered-everything.",
+      "files": [],
+      "expectations": [
+        "Output defines a design system with CSS variables or Tailwind config BEFORE component code",
+        "Color palette is NOT the default blue-purple-white AI aesthetic (no #6366f1, #8b5cf6, or similar)",
+        "Typography uses a non-default font pairing, not just Inter/system-ui",
+        "Components reference design tokens, not hard-coded color values",
+        "Hero section has a specific visual treatment beyond just centered text on a solid background",
+        "No sentences like 'modern, scalable landing page' in comments or documentation",
+        "Responsive strategy is addressed (mobile layout differs from desktop, not just shrunk)",
+        "Design system includes animation/transition tokens (timing functions, durations) as named values, not ad-hoc inline values",
+        "Token architecture has at least 2 levels: raw/primitive values and semantic aliases (e.g. --blue-600 mapped to --primary, not just flat color names)",
+        "At least one layout section uses asymmetry, offset, overlap, or broken grid — not all sections are symmetrically centered"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need a dashboard UI for a project management tool. Show: task list with status columns (kanban style), a sidebar with project navigation, and a top bar with user avatar and notifications. Use React + any CSS approach. Make it look premium, not like a Jira clone.",
+      "expected_output": "Should create a distinctive dashboard that doesn't look like every other kanban board. Design system first with 3-level tokens. Should address interaction states (hover, drag, empty states) across ALL components not just buttons. Should have visual personality. Should include skeleton/loading states.",
+      "files": [],
+      "expectations": [
+        "Design system tokens are defined before any component code",
+        "Kanban columns have visual differentiation beyond just text labels (colors, icons, or visual weight)",
+        "Sidebar has hover/active states defined, not just static layout",
+        "Empty state is addressed (what does an empty column look like?)",
+        "Shadow, border-radius, or gradient values come from the design system, not inline",
+        "Output does NOT look like a Bootstrap/Material UI default theme",
+        "Animation or transition is used for at least one interaction (drag, hover, or navigation)",
+        "Loading/skeleton state is defined for at least one data-dependent component (task cards, project list, or notification panel)",
+        "Focus-visible styles exist on interactive elements (keyboard accessibility) — not just hover states",
+        "Design rationale is present: at least one comment or doc section explaining WHY specific colors, spacing, or visual choices were made"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Redesign this login page. Currently it's just a white page with a centered card, email/password inputs, and a blue login button. Make it look like a premium fintech app. Vue 3 + CSS, no Tailwind.",
+      "expected_output": "Should transform a generic login into something with visual identity. Should use CSS custom properties with semantic naming (not just --color-1). Should consider ALL states (loading, error, success, disabled). Should have depth/atmosphere beyond flat white. Should verify CSS feature support is current.",
+      "files": [],
+      "expectations": [
+        "Background is NOT plain white — uses gradient, pattern, image, or dark theme",
+        "CSS custom properties (--var) are used for colors and spacing, not hard-coded values",
+        "Login button has distinct hover, focus, and loading states",
+        "Error state is visually designed (not just red text under input)",
+        "Form inputs have custom styling beyond browser defaults",
+        "Uses CSS animations for at least one element (entry animation, loading spinner, or transition)",
+        "Output includes focus-visible styles for keyboard accessibility",
+        "CSS custom properties use semantic names (--primary, --surface, --error) not raw names (--color-1, --blue, --dark-bg)",
+        "Success state after login is visually designed (not just a redirect — shows confirmation feedback)",
+        "Disabled state for submit button is visually distinct from default state (not just opacity change)"
+      ]
+    }
+  ]
+}

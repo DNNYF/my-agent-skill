@@ -1,0 +1,49 @@
+{
+  "skill_name": "project-documenter",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Dokumentasiin project ini dong. Ini project Next.js 14 buat invoice tracker freelancer. Ada Supabase buat auth dan database, Stripe buat payment, deploy di Vercel. Buat technical documentation yang lengkap.",
+      "expected_output": "Should scan codebase first, then ask confirmation questions (where to save, what format, what to include). Should produce technical docs that reference actual files and patterns from the codebase. Should NOT produce generic template output.",
+      "files": [],
+      "expectations": [
+        "Agent asks at least 1 confirmation question before producing output (format, location, or scope)",
+        "Agent attempts to scan/read the codebase before writing documentation",
+        "Output references specific file paths or directory structures from the actual project",
+        "Tech stack section includes WHY each technology was chosen, not just names",
+        "Does NOT contain filler introduction like 'This document provides a comprehensive overview'",
+        "Environment variables are listed with descriptions, not just names",
+        "Known issues or gaps are documented honestly, not hidden"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Buat presentasi PPT untuk demo project ini ke stakeholder. Project-nya app manajemen inventory untuk UMKM. Pake Canva kalo bisa, kalo gak bisa pake format lain aja.",
+      "expected_output": "Should check if Canva MCP or pptx skill is available. If not available, should tell the user with specific alternatives. Should ask about audience, slide count, color theme before creating. Should NOT just create without confirmation.",
+      "files": [],
+      "expectations": [
+        "Agent checks for Canva MCP tools or pptx skill availability before promising output",
+        "If tools are missing, agent explicitly tells user what's not available with alternatives",
+        "Agent asks about audience, tone, or slide count before creating content",
+        "Agent asks where to save the output",
+        "Presentation outline/content is specific to inventory management, not generic startup pitch",
+        "Agent does NOT silently fail or produce wrong format without informing user"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need a handoff document for this project. A new developer is joining next week and needs to get up to speed. Create it as a Notion page in my workspace.",
+      "expected_output": "Should check for Notion MCP availability. Should scan the codebase. Should ask which Notion workspace/page. Should produce handoff-specific content (setup steps, gotchas, key flows) not generic project overview.",
+      "files": [],
+      "expectations": [
+        "Agent checks for Notion MCP tools (notion_* tools) availability",
+        "If Notion MCP missing, offers specific alternatives (markdown file, etc.)",
+        "Agent asks which Notion workspace or page to create under",
+        "Handoff document includes 'Getting Running' section with actual commands",
+        "Handoff includes 'Things That Will Bite You' or gotchas section",
+        "Agent scans codebase before writing (reads files, not just guessing)",
+        "Output is structured for a NEW developer, not a stakeholder or manager"
+      ]
+    }
+  ]
+}

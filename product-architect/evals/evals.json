@@ -1,0 +1,48 @@
+{
+  "skill_name": "product-architect",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Saya mau bikin app buat tracking pengeluaran freelancer. Jadi freelancer bisa masukin expense, attach receipt foto, terus di akhir bulan bisa generate laporan buat pajak. Target market freelancer Indonesia yang penghasilannya 10-50jt/bulan.",
+      "expected_output": "Should produce structured product documents starting with Product Overview, following the 5-phase workflow (Decompose > Scope > Architect > Detail > Validate). Should ask clarifying questions first before producing documents. Output should be specific to this expense tracker, not generic.",
+      "files": [],
+      "expectations": [
+        "Agent asks at least 2 clarifying questions before producing documents",
+        "Output mentions specific Indonesian tax context (PPh 21, PPh 23, or similar)",
+        "Tech stack recommendations include specific reasoning, not just names",
+        "No sentences that could be swapped into a different product's documentation unchanged",
+        "Agent follows the 5-phase sequence and does not skip Decompose or Scope",
+        "MVP scope is explicitly defined and separates v1 from future features",
+        "Output does NOT contain filler phrases like 'comprehensive solution' or 'robust platform' or 'cutting-edge'"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I want to build a browser extension that helps people compare prices across e-commerce sites. When you're on Tokopedia looking at a product, it shows prices from Shopee, Bukalapak, etc. Maybe also price history graphs.",
+      "expected_output": "Should address browser extension-specific architecture (content scripts, background workers, popup). Should identify the scraping/API challenge as a core technical risk. Should scope MVP aggressively - probably just 2 platforms to start.",
+      "files": [],
+      "expectations": [
+        "Architecture addresses browser extension components (content script, background service worker, popup)",
+        "Identifies web scraping legality or API availability as a risk or constraint",
+        "MVP scope limits to 2-3 e-commerce platforms, not all of them",
+        "Does NOT recommend microservices or over-engineered backend for what is essentially a client-side tool",
+        "Price history feature is explicitly scoped as v2 or later, not crammed into MVP",
+        "Tech stack includes specific browser extension framework reasoning (Manifest V3, Plasmo, WXT, or similar)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Plan MVP untuk SaaS yang bisa bikin invoice otomatis dari data project di Jira. Jadi consulting firm bisa track time di Jira, terus generate invoice langsung dari situ. Target market consulting firm kecil 5-20 orang.",
+      "expected_output": "Should connect Jira API integration as the core technical challenge. Should address billing models, multi-tenant architecture at small scale. Should be opinionated about tech choices with reasoning.",
+      "files": [],
+      "expectations": [
+        "Addresses Jira API integration specifics (OAuth, webhooks, or Atlassian Connect)",
+        "Data model includes relationship between Jira worklogs and invoice line items",
+        "Recommends a monolith or simple architecture, NOT microservices for a 5-20 person target",
+        "Discusses multi-tenancy approach with specific recommendation",
+        "Tech recommendations include version numbers or recency indicators showing research awareness",
+        "Output includes acceptance criteria that a developer could test against"
+      ]
+    }
+  ]
+}
