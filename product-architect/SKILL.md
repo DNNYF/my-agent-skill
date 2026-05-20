@@ -27,6 +27,46 @@ Every product idea passes through 5 sequential phases. Never skip ahead. Never p
 
 **Phase Priority Rule**: If time or context is constrained, produce at least one document from each of the first 3 phases (Decompose, Scope, Architect) before going deep on any single phase. A shallow pass through all three is more valuable than a deep pass through only two — a developer cannot start coding without architecture decisions.
 
+### Phase 0: Product Scale Selection
+
+Before starting Phase 1, determine the product's scale context. This shapes the depth and breadth of the entire workflow.
+
+**Ask the user:**
+
+> "Sebelum mulai, mau buat ini untuk level MVP/startup atau Enterprise?"
+>
+> (English: "Before we start — is this an MVP/startup product or an enterprise-level system?")
+
+**If MVP/Startup**: Proceed directly to Phase 1. No changes to workflow. Keep it lean.
+
+**If Enterprise**: Ask follow-up questions to understand which enterprise concerns apply. Not all enterprises need everything — only activate what's relevant. Ask maximum 5 questions, selected based on context clues:
+
+1. **Compliance & Regulation**
+   > "Compliance apa yang berlaku? (GDPR, SOC2, HIPAA, PCI-DSS, regulasi lokal seperti PP 71/2019, OJK?)"
+   - Determines: data handling architecture, audit requirements, documentation depth
+
+2. **Organizational Structure**
+   > "Berapa tim yang terlibat dalam build & maintain? Ada cross-team dependencies?"
+   - Determines: service boundaries, API contracts, RACI needs, integration contracts
+
+3. **Existing Systems**
+   > "Ada legacy system yang harus diintegrasikan? Atau ini greenfield?"
+   - Determines: migration strategy, integration patterns, data migration approach
+
+4. **Security Posture**
+   > "Ada security requirements khusus? (zero-trust, specific IAM provider, threat model requirements, data residency?)"
+   - Determines: security architecture depth, IAM design, network topology
+
+5. **Operational Requirements**
+   > "Apa SLA/uptime target? Ada runbook atau incident response process yang sudah jalan?"
+   - Determines: observability depth, deployment strategy, rollback planning, SLO targets
+
+Based on answers, activate relevant enterprise extensions throughout Phases 1-5. Only inject what's relevant — a B2B SaaS might need SOC2 but not HIPAA. A fintech needs PCI-DSS but maybe not GDPR.
+
+For enterprise-level guidance, consult `references/enterprise-framework.md`.
+
+---
+
 ### Phase 1: Decompose
 
 Break the idea into fundamentals:
@@ -139,6 +179,8 @@ Produce one document at a time. Never dump everything at once. Recommended order
 
 After each document, ask: "Continue to [next document], or revisions needed here?"
 
+**Enterprise mode**: When enterprise mode is active, documents 4 (PRD) and 5 (Technical Architecture) gain additional sections for compliance, governance, security architecture, and observability. Document 8 (Implementation Roadmap) gains operational readiness gates per phase. Only include enterprise extensions relevant to the user's answers from Phase 0. See `references/enterprise-framework.md` for full enterprise extensions.
+
 Full templates for all 8 documents are in `references/document-templates.md`.
 
 ---
@@ -154,6 +196,7 @@ Full templates for all 8 documents are in `references/document-templates.md`.
 7. **Boring technology wins** - SQLite > distributed DB for side projects. SSR > SPA for landing pages. Cron > message queue for simple batch processing.
 8. **Zero AI slop** - Every sentence must carry specific, non-obvious information. Read the full anti-slop rules below.
 9. **Research before recommending** - Never rely on training data alone. Your knowledge is a snapshot, not the current reality. Look things up. Read the full research protocol below.
+10. **Scale-appropriate complexity** - Enterprise features (governance, compliance, multi-team coordination) are only introduced when the product context demands them. Adding SOC2 compliance to a weekend project is overengineering. Skipping it for a healthcare SaaS serving hospitals is negligence. Match the architecture depth to the actual stakes.
 
 For detailed principles and anti-patterns, consult `references/principles.md`.
 
@@ -289,3 +332,4 @@ For detailed content beyond this core workflow:
 - **`references/document-templates.md`** - Complete templates for all 8 document types with field-by-field guidance
 - **`references/thinking-framework.md`** - Deep dive into each thinking phase with examples and common mistakes
 - **`references/principles.md`** - Expanded principles, anti-patterns to avoid, and decision-making heuristics
+- **`references/enterprise-framework.md`** - Enterprise-level governance, compliance, security, observability, and multi-team coordination guidance (activated only when Enterprise mode is selected in Phase 0)

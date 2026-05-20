@@ -499,3 +499,193 @@ Phase 2a || Phase 2b: [can be built in parallel because no shared state]
 - If estimate confidence is low, say "needs spike first" instead of guessing.
 - Technical debt section is mandatory. Acknowledging shortcuts makes them intentional decisions, not accidents.
 - Post-MVP backlog captures ideas that were scoped out. This prevents losing good ideas while keeping MVP focused.
+
+
+---
+
+## Enterprise Extensions
+
+**When to include**: Only when Enterprise mode is active (Phase 0). Only include sections relevant to the user's specific compliance/governance/operational answers.
+
+**Integration rule**: These sections are inserted INTO the base templates above, not appended as a separate document. They should feel like natural parts of the document.
+
+---
+
+### Extension A: PRD — Compliance & Data Governance
+
+Insert after section 3.2 (Non-Functional Requirements) in the PRD template:
+
+```markdown
+### 3.3 Compliance Requirements
+
+#### CR-001: [Requirement Name — e.g., "GDPR Right to Erasure"]
+- **Regulation**: [GDPR Article 17 / SOC2 CC6.1 / HIPAA §164.312 / etc.]
+- **Obligation**: [What the regulation requires, in plain language]
+- **System Impact**: [How this affects architecture — e.g., "All user PII must be deletable within 30 days, including backups and audit logs older than retention period"]
+- **Acceptance Criteria**:
+  - [ ] [Testable criterion — e.g., "DELETE /api/users/:id removes all PII from primary DB within 24h"]
+  - [ ] [Testable criterion — e.g., "Backup purge job removes PII from backups within 30 days"]
+- **Verification Method**: [How compliance is proven — automated test, manual audit, third-party assessment]
+- **Owner**: [Team/role responsible for maintaining compliance]
+
+#### CR-002: [Next requirement]
+[same structure]
+
+### 3.4 Data Governance
+
+#### Data Classification
+| Entity | Classification | Justification | Handling |
+|--------|---------------|---------------|----------|
+| User.email | Confidential (PII) | Personally identifiable | Encrypted at rest, access logged |
+| User.health_record | Restricted (PHI) | HIPAA-protected | Encrypted, BAA-compliant storage, minimum necessary access |
+| Invoice.amount | Internal | Business-sensitive | Access control, no public exposure |
+| Product.description | Public | Marketing content | No special handling |
+
+#### Data Retention Policy
+| Data Type | Retention Period | Justification | Deletion Method |
+|-----------|----------------|---------------|-----------------|
+| User PII | Account lifetime + 30 days | GDPR requirement | Hard delete + backup purge |
+| Audit logs | 6 years | SOC2 / HIPAA requirement | Automated archival then deletion |
+| Transaction records | 7 years | Tax/financial regulation | Archive to cold storage |
+| Session data | 24 hours | No business need beyond session | Auto-expire |
+
+### 3.5 Governance & Approval Workflows
+
+| Action | Requires Approval From | SLA | Automation |
+|--------|----------------------|-----|-----------|
+| [Action — e.g., "Bulk data export"] | [Role — e.g., "Data Protection Officer"] | [Time — e.g., "72h"] | [How — e.g., "Slack notification + approval button"] |
+| [Action — e.g., "New third-party integration"] | [Role — e.g., "Security Lead + Compliance"] | [Time] | [How] |
+| [Action — e.g., "Production schema migration"] | [Role — e.g., "Tech Lead + DBA"] | [Time] | [How — e.g., "PR approval gate in CI/CD"] |
+```
+
+**Guidance:**
+- Every compliance requirement must trace to a specific regulation clause, not just "GDPR" generically.
+- Data classification drives architecture decisions. If you classify something as Restricted but store it in an unencrypted field, that's a contradiction.
+- Approval workflows should be automatable. If it requires a meeting for every approval, it won't scale.
+
+---
+
+### Extension B: Technical Architecture — Security & Observability
+
+Insert after section 5 (Security Considerations) in the Technical Architecture template:
+
+```markdown
+## 5b. Security Architecture
+
+### Threat Model (STRIDE)
+
+#### Flow: [Critical Flow — e.g., "User Authentication"]
+| Threat | Attack Vector | Likelihood | Impact | Mitigation |
+|--------|--------------|-----------|--------|-----------|
+| Spoofing | Stolen credentials, session hijacking | Medium | High | MFA, short-lived sessions, device fingerprinting |
+| Tampering | Modified JWT claims | Low | Critical | Signed tokens, server-side validation |
+| Repudiation | User denies action | Medium | Medium | Immutable audit log with timestamp + IP |
+| Info Disclosure | SQL injection, verbose errors | Medium | High | Parameterized queries, generic error messages |
+| DoS | Brute force login | High | Medium | Rate limiting (10 attempts/min), CAPTCHA after 5 |
+| Elevation | Role manipulation | Low | Critical | Server-side role check on every request, no client-side role storage |
+
+#### Flow: [Next Critical Flow]
+[same structure]
+
+### Identity & Access Management
+
+| Aspect | Design Decision | Rationale |
+|--------|----------------|-----------|
+| Identity Provider | [e.g., Auth0 / Okta / self-hosted Keycloak] | [why — e.g., "SOC2-compliant, supports SAML for enterprise SSO"] |
+| Authorization Model | [RBAC / ABAC / ReBAC] | [why — e.g., "RBAC sufficient for 3 roles, ABAC overkill at this scale"] |
+| Session Management | [JWT / session cookie / opaque token] | [why — trade-offs] |
+| Service-to-Service Auth | [mutual TLS / API key / OAuth client credentials] | [why] |
+| Secrets Management | [Vault / AWS Secrets Manager / env vars] | [why] |
+
+### Network Security
+- **Perimeter**: [WAF, DDoS protection — e.g., Cloudflare, AWS Shield]
+- **Segmentation**: [VPC layout, subnet strategy, security groups]
+- **Internal**: [Service mesh / mutual TLS / network policies]
+- **Egress**: [What can reach the internet, what can't]
+
+## 6b. Observability & Operational Readiness
+
+### SLO Definitions
+| Service | SLI | SLO | Error Budget (monthly) |
+|---------|-----|-----|----------------------|
+| [API] | Availability (2xx+3xx / total) | 99.9% | 43 minutes downtime |
+| [API] | Latency p99 | < 500ms | 0.1% requests above threshold |
+| [Worker] | Job completion rate | 99.5% | 0.5% failed jobs |
+| [Frontend] | Core Web Vitals (LCP) | < 2.5s | — |
+
+### Monitoring Stack
+| Layer | Tool | What It Covers |
+|-------|------|---------------|
+| Infrastructure | [e.g., CloudWatch / Datadog] | CPU, memory, disk, network |
+| Application | [e.g., OpenTelemetry + Grafana] | Traces, metrics, logs |
+| Business | [e.g., Mixpanel / custom dashboard] | User actions, revenue, conversion |
+| Alerting | [e.g., PagerDuty / Opsgenie] | On-call routing, escalation |
+
+### Deployment Strategy
+- **Method**: [Blue-green / Canary / Rolling]
+- **Rollback**: [Automated on error rate spike / manual / both]
+- **Database migrations**: [Forward-only with backward compat / reversible]
+- **Feature flags**: [Tool — e.g., LaunchDarkly / Unleash / env vars]
+
+### Incident Response
+| Severity | Definition | Response Time | Escalation |
+|----------|-----------|---------------|-----------|
+| P1 — Critical | Service down, data loss risk | 15 min | Immediate page to on-call + engineering lead |
+| P2 — Major | Degraded performance, partial outage | 1 hour | Page on-call |
+| P3 — Minor | Non-critical feature broken | Next business day | Ticket |
+```
+
+**Guidance:**
+- STRIDE analysis is mandatory for any flow handling Confidential or Restricted data. For Internal/Public data flows, a lighter risk assessment suffices.
+- SLOs must be defined BEFORE launch. Retrofitting SLOs after an outage is reactive, not engineering.
+- Deployment strategy must include rollback. "We'll figure it out" is not a rollback plan.
+
+---
+
+### Extension C: Implementation Roadmap — Operational Readiness Gates
+
+Add to each phase in the Implementation Roadmap:
+
+```markdown
+### Operational Readiness Gate — Phase [N]
+
+Before proceeding to Phase [N+1], verify:
+- [ ] Health check endpoint responds correctly
+- [ ] Monitoring covers all new components (no blind spots)
+- [ ] Alerts configured with documented runbooks
+- [ ] Rollback tested and documented for this phase's changes
+- [ ] Security review completed for new data flows (if any)
+- [ ] Compliance checklist passed for new data handling (if any)
+- [ ] Load tested at 2x expected traffic for this phase
+- [ ] On-call rotation updated to cover new components
+- [ ] Architecture documentation updated
+```
+
+Add at the end of the Implementation Roadmap:
+
+```markdown
+## Operational Maturity Roadmap
+
+Beyond feature delivery, the system must mature operationally:
+
+| Milestone | Target | Criteria | Owner |
+|-----------|--------|----------|-------|
+| **L1: Basic** | Launch day | Health checks, error alerting, manual deployment, basic logging | Engineering |
+| **L2: Observable** | Launch + 30d | Distributed tracing, custom dashboards, structured logging, automated deployment | Engineering + DevOps |
+| **L3: Resilient** | Launch + 60d | Runbooks for all P1/P2, on-call rotation, automated rollback, dependency circuit breakers | DevOps + Engineering |
+| **L4: Proactive** | Launch + 90d | Chaos engineering, load testing in CI, SLO-based alerting, capacity planning | Platform team |
+| **L5: Compliant** | Launch + 120d | All audit controls documented, evidence collection automated, pen-test completed, compliance audit ready | Security + Compliance |
+
+### Post-Launch Review Schedule
+| Review | Frequency | Participants | Output |
+|--------|-----------|-------------|--------|
+| Architecture review | Quarterly | Tech leads | ADR updates, tech debt prioritization |
+| Security review | Bi-annually | Security + Engineering | Threat model update, vulnerability assessment |
+| Compliance review | Annually | Compliance + Legal + Engineering | Audit readiness report |
+| Capacity review | Monthly | DevOps + Engineering | Scaling plan, cost optimization |
+```
+
+**Guidance:**
+- Operational readiness gates are blocking — don't skip them to ship faster. Shipping without monitoring is shipping blind.
+- The maturity roadmap is a target, not a deadline. Adjust timelines to team size and product criticality.
+- Not every product needs L5. A B2B SaaS with 10 customers might stop at L3. A healthcare platform must reach L5 before handling real patient data.

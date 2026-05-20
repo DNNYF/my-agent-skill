@@ -7,9 +7,10 @@ Designed for developers who "vibecode" and need an AI that works like a senior e
 ## About The Skills
 
 ### 1. Product Architect
-Turns raw ideas into buildable product blueprints using a rigorous 5-phase thinking framework.
+Turns raw ideas into buildable product blueprints using a rigorous 5-phase thinking framework. Supports both **MVP** and **Enterprise** modes — asks upfront, then adapts depth accordingly.
 - **Triggers**: "plan a product", "create a PRD", "architect a system", "plan MVP"
 - **Output**: Product Overview, User Personas, User Flows, PRD, Technical Architecture, Data Models, API Specs, Implementation Roadmaps.
+- **Enterprise Mode** (activated on demand): Adds governance & compliance (GDPR, SOC2, HIPAA, PCI-DSS), STRIDE threat modeling, multi-team coordination (RACI, integration contracts), observability (SLO/SLI, runbooks), and migration/legacy integration strategies.
 
 ### 2. Frontend Design
 Builds distinctive, production-grade frontends with a strict "design system first" approach. Actively avoids the "default AI SaaS aesthetic" (e.g., generic indigo/purple interfaces).
@@ -20,6 +21,7 @@ Builds distinctive, production-grade frontends with a strict "design system firs
 Reads a codebase to understand what was actually built, then produces documentation that reads like it was written by the lead engineer.
 - **Triggers**: "document this project", "create project docs", "write a POC report", "write a handoff document"
 - **Output**: 9 different document types including Markdown docs, PDFs, Word, PPT presentations, and Changelogs. Includes a strict multi-step confirmation protocol before writing.
+- **Lifecycle-aware**: Supports incremental updates (not just creation), phase-based documentation priority (MVP → Enterprise), and cross-skill integration with product-architect output.
 
 ---
 

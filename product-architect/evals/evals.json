@@ -43,6 +43,92 @@
         "Tech recommendations include version numbers or recency indicators showing research awareness",
         "Output includes acceptance criteria that a developer could test against"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "Kita mau bikin platform telemedicine untuk rumah sakit di Indonesia. Pasien bisa konsultasi online sama dokter, ada video call, resep digital, dan integrasi sama sistem rekam medis rumah sakit (SIMRS). Target 50 rumah sakit dalam 2 tahun. Tim kita ada 4 squad.",
+      "expected_output": "Should trigger Enterprise mode (Phase 0). Should ask about HIPAA/local health regulations, existing SIMRS systems, security requirements. Should produce architecture with compliance, multi-team coordination, and security depth.",
+      "files": [],
+      "expectations": [
+        "Agent asks 'MVP atau Enterprise?' or directly identifies this as enterprise-level based on context",
+        "Agent asks follow-up questions about compliance (PP 71/2019, health data regulations)",
+        "Agent asks about existing SIMRS systems and integration constraints",
+        "Agent asks about security requirements for health data",
+        "Architecture includes STRIDE threat model or security architecture section",
+        "Data classification is applied (PHI as Restricted)",
+        "Multi-team coordination is addressed (4 squads, service boundaries, RACI)",
+        "Audit trail requirements are specified for patient data access",
+        "Does NOT skip compliance requirements to v2 — health data protection is MVP scope",
+        "References Indonesian health regulations (PP 71/2019, Permenkes) not just HIPAA"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Build a B2B SaaS for enterprise expense management. SOC2 compliance required, integrates with SAP and Oracle ERP, 3 engineering teams will build it. Target: Fortune 500 companies. Need to handle PCI-DSS for corporate card data.",
+      "expected_output": "Should activate full enterprise mode. Should address SOC2, PCI-DSS, multi-team architecture, legacy ERP integration patterns, and operational readiness.",
+      "files": [],
+      "expectations": [
+        "Agent identifies this as Enterprise and activates enterprise mode",
+        "SOC2 requirements are reflected in architecture (audit logging, access control, change management)",
+        "PCI-DSS is addressed — recommends tokenization or delegating card handling to compliant processor",
+        "Integration patterns for SAP/Oracle are discussed (middleware, API gateway, or integration platform)",
+        "Multi-team coordination is explicit (3 teams, service boundaries, integration contracts)",
+        "SLO/SLI definitions are included or recommended",
+        "Deployment strategy includes rollback and operational readiness gates",
+        "Does NOT treat this as a simple monolith — acknowledges scale requires thoughtful service design",
+        "Architecture decisions reference actual enterprise integration tools (MuleSoft, Workato, or similar)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Mau bikin fintech lending platform. P2P lending buat UMKM Indonesia. Harus comply sama OJK, ada credit scoring, disbursement, dan collection. Tim 2 squad, target launch 6 bulan.",
+      "expected_output": "Should trigger enterprise mode due to OJK compliance. Should address financial regulations, credit scoring architecture, payment integration, and security for financial data.",
+      "files": [],
+      "expectations": [
+        "Agent identifies OJK compliance as enterprise-level requirement",
+        "References specific OJK regulations (POJK for P2P lending, sandbox requirements)",
+        "Data classification includes financial data as Confidential/Restricted",
+        "Credit scoring architecture is discussed (ML model, data sources, fairness considerations)",
+        "Payment/disbursement integration addresses Indonesian payment rails (bank transfer, e-wallet)",
+        "Security architecture includes fraud detection considerations",
+        "Audit trail for all financial transactions is specified",
+        "Multi-team scoping addresses 2 squads with clear boundaries",
+        "Timeline acknowledges OJK licensing process may affect launch date",
+        "Does NOT recommend generic 'use Stripe' — addresses Indonesia-specific payment landscape"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I want to build a simple todo app for personal use. Just me using it. Maybe share with my wife later.",
+      "expected_output": "Should NOT trigger enterprise mode. Should keep it extremely simple. Should actively resist overengineering.",
+      "files": [],
+      "expectations": [
+        "Agent does NOT ask enterprise questions — this is clearly MVP/personal",
+        "Architecture is minimal (SQLite or local storage, no microservices)",
+        "Does NOT recommend Kubernetes, message queues, or distributed databases",
+        "Does NOT add compliance, audit logging, or multi-team coordination",
+        "Scope is aggressively small — basic CRUD for todos",
+        "Tech stack is boring and simple (maybe just a single framework)",
+        "Agent might even suggest existing tools (Notion, Todoist) before building custom"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "We're building an enterprise HR platform that needs to handle employee data across 15 countries. GDPR for EU employees, local labor laws per country. Integrates with existing Active Directory. 6 engineering teams.",
+      "expected_output": "Should activate enterprise mode with heavy compliance focus. Should address multi-region data residency, GDPR, cross-team coordination at scale, and AD integration.",
+      "files": [],
+      "expectations": [
+        "Agent activates enterprise mode and asks about specific countries/regulations",
+        "GDPR is addressed with specific architectural impact (data residency, right to erasure, consent)",
+        "Multi-region data residency is a core architecture concern",
+        "Active Directory integration is addressed (SCIM, SAML, or direct LDAP)",
+        "6-team coordination includes RACI or explicit ownership model",
+        "Service boundaries are defined to allow team autonomy",
+        "Data classification covers employee PII across jurisdictions",
+        "Architecture addresses 'which data stays in which region' explicitly",
+        "Does NOT produce a simple monolith — acknowledges multi-region requires distributed design",
+        "Operational readiness includes incident response for data breaches (GDPR 72-hour notification)"
+      ]
     }
   ]
 }

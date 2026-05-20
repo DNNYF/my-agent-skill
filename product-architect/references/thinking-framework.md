@@ -297,3 +297,223 @@ Read the complete documentation from a user's perspective:
 - [ ] Risks have mitigation strategies
 - [ ] Timeline accounts for testing and deployment
 - [ ] A developer can start coding from these documents alone
+
+
+---
+
+## Enterprise Considerations per Phase
+
+**When to apply**: Only when Enterprise mode is active (Phase 0 answered "Enterprise"). Only include considerations relevant to the user's specific answers about compliance, teams, legacy, security, and operations.
+
+---
+
+### Phase 1 (Decompose) — Enterprise Context
+
+In addition to Who/What/Why/Value Prop, enterprise decomposition must also capture:
+
+#### Compliance Context
+- What regulations apply to this product's data? (from Phase 0 answers)
+- What data classifications exist? (PII, PHI, financial, public)
+- Are there data residency requirements? (must stay in specific country/region)
+- What audit requirements exist? (who needs to prove what to whom)
+
+#### Organizational Context
+- How many teams will build this? What are their boundaries?
+- Who owns what? (product decisions, technical decisions, security, compliance)
+- What's the approval chain for shipping features?
+- Are there existing architecture standards or tech radar constraints?
+
+#### Integration Context
+- What existing systems must this integrate with?
+- What's the data flow between old and new systems?
+- Who owns the legacy systems? Are they modifiable?
+- What's the migration timeline pressure? (hard deadline vs gradual)
+
+#### Security Context
+- What's the threat landscape? (internal users only vs public internet)
+- What's the data sensitivity? (public content vs health records)
+- Are there specific security certifications needed? (SOC2, ISO 27001)
+- What's the existing security infrastructure? (SSO, WAF, SIEM)
+
+**Output**: The "My Understanding" summary in enterprise mode should include a "Constraints & Context" section:
+
+```
+## My Understanding
+
+**Product**: [name/brief description]
+**Target User**: [who, in what situation]
+**Problem**: [specific problem]
+**Core Solution**: [one sentence]
+**Initial Scope**: [identified key features]
+
+### Enterprise Context
+- **Compliance**: [applicable regulations]
+- **Teams**: [number, boundaries]
+- **Integration**: [legacy systems, constraints]
+- **Security**: [posture, requirements]
+- **Operations**: [SLA targets, existing processes]
+
+Is this accurate? Anything to correct?
+```
+
+---
+
+### Phase 2 (Scope) — Enterprise Scoping
+
+Enterprise scoping adds these considerations:
+
+#### Non-Deferrable Compliance Scope
+Some compliance requirements CANNOT be deferred to v2:
+- Data encryption at rest → must be in v1 if handling Restricted data
+- Audit logging → must be in v1 if SOC2/HIPAA applies
+- Consent management → must be in v1 if GDPR applies
+- Access control → must be in v1 if multi-tenant
+
+**Rule**: If a compliance requirement is legally mandatory for the data you're handling, it's automatically MVP scope regardless of effort. You can simplify the implementation, but you cannot skip it.
+
+#### Multi-Team Scoping
+When multiple teams are involved:
+- Define clear ownership boundaries per feature/service
+- Identify cross-team dependencies that could block progress
+- Scope integration contracts as explicit deliverables (not afterthoughts)
+- Add "contract definition" as a Phase 1 task for dependent teams
+
+#### Enterprise Risk Categories
+Add to the standard risk assessment:
+
+| Category | Enterprise-Specific Risks |
+|----------|--------------------------|
+| Compliance | Regulation misinterpretation, audit failure, data breach notification |
+| Organizational | Team dependency delays, approval bottlenecks, key person risk |
+| Integration | Legacy system instability, undocumented APIs, data quality issues |
+| Security | Threat landscape changes, zero-day vulnerabilities, insider threats |
+| Operational | SLA breach, incident response gaps, monitoring blind spots |
+
+---
+
+### Phase 3 (Architect) — Enterprise Architecture
+
+#### Security Architecture as a First-Class Design Activity
+In enterprise mode, security is not a section at the end — it's a design constraint from the start:
+
+- **Before choosing a database**: What data classification does it store? Does the provider have the required compliance certifications?
+- **Before choosing an auth provider**: Does it support the required SSO/SAML/SCIM? Is it SOC2 certified?
+- **Before designing APIs**: What authorization model is needed? Per-resource? Per-field? Per-row?
+- **Before choosing hosting**: Data residency requirements? BAA available? Compliance certifications?
+
+#### Observability as Architecture
+Design observability in, don't bolt it on:
+
+- **Structured logging from day 1** — Not `console.log`, but structured events with correlation IDs
+- **Trace context propagation** — Every request gets a trace ID that flows through all services
+- **Metric emission points** — Identify where to emit custom metrics during architecture design
+- **Health check endpoints** — Every service exposes `/health` with dependency status
+
+#### Integration Architecture
+When integrating with legacy systems:
+
+- **Define the anti-corruption layer** — Where does translation between old and new models happen?
+- **Choose sync strategy** — Real-time (events/webhooks) vs batch (ETL/cron) vs hybrid
+- **Design for failure** — What happens when the legacy system is down? Queue? Degrade? Block?
+- **Plan the migration path** — Even if not migrating now, design so migration is possible later
+
+#### Multi-Team Architecture Decisions
+Additional ADRs needed for multi-team:
+
+```
+### AD-XXX: Service Boundary — [Service A] vs [Service B]
+- Context: Teams X and Y both need access to [shared concern]
+- Options: Shared library, shared service, duplicated logic
+- Decision: [chosen approach]
+- Rationale: [why — team autonomy vs consistency trade-off]
+- Contract: [how teams communicate changes — API versioning, event schema registry]
+```
+
+---
+
+### Phase 4 (Detail) — Enterprise Detail
+
+#### Audit Trail per Use Case
+For enterprise use cases handling Confidential/Restricted data, add:
+
+```
+### UC-XXX: [Use Case Name]
+[...standard use case fields...]
+
+#### Audit Requirements
+- **Events to log**: [which steps generate audit entries]
+- **Data captured**: [actor, action, resource, before/after state]
+- **Retention**: [how long audit entries are kept]
+- **Access**: [who can view audit logs for this flow]
+```
+
+#### Compliance-Aware Error Handling
+Enterprise error handling must consider:
+- **No data leakage in errors** — Error messages must not expose PII, system internals, or stack traces to end users
+- **Audit failed access** — Failed authorization attempts are logged with full context
+- **Compliance-specific errors** — "Data cannot be processed due to consent withdrawal" vs generic 403
+
+#### Multi-Team API Contracts
+When detailing APIs that cross team boundaries:
+
+```markdown
+### API Contract: [Endpoint]
+
+#### Ownership
+- **Provider**: [Team name]
+- **Consumers**: [Team names]
+
+#### Change Policy
+- Breaking changes: 90-day notice minimum
+- Non-breaking additions: Notify consumers, no approval needed
+- Deprecation: Announce → dual-run (30 days) → sunset
+
+#### Testing
+- Contract tests owned by: [consumer / provider / both]
+- Test environment: [shared staging / mocked / both]
+
+#### SLA
+- Availability: [target]
+- Latency p99: [target]
+- Rate limit: [requests per second per consumer]
+```
+
+---
+
+### Phase 5 (Validate) — Enterprise Validation
+
+Add these checks to the standard validation phase:
+
+#### Compliance Validation
+- [ ] Every data entity has a classification tag
+- [ ] Every Restricted/Confidential entity has encryption specified
+- [ ] Audit logging covers all state changes to sensitive data
+- [ ] Data retention policies are defined and implementable
+- [ ] Consent flows exist for all PII collection points (if GDPR)
+- [ ] Right to erasure is technically feasible with the designed architecture
+- [ ] All third-party services have appropriate compliance certifications
+
+#### Security Validation
+- [ ] STRIDE analysis completed for all critical flows
+- [ ] Authentication covers all entry points (no unprotected endpoints)
+- [ ] Authorization is checked at every layer (not just API gateway)
+- [ ] Secrets management approach defined (no hardcoded secrets)
+- [ ] Network segmentation prevents lateral movement
+- [ ] Dependency security scanning is part of CI/CD
+
+#### Operational Validation
+- [ ] SLOs defined for all user-facing services
+- [ ] Monitoring covers all components (no blind spots)
+- [ ] Alerting routes to the right team with appropriate urgency
+- [ ] Runbooks exist for all P1/P2 scenarios
+- [ ] Deployment can be rolled back within [defined time]
+- [ ] Disaster recovery plan exists (if SLA requires it)
+- [ ] Capacity planning accounts for expected growth
+
+#### Multi-Team Validation
+- [ ] Service boundaries are clear — no shared ownership ambiguity
+- [ ] API contracts are documented and agreed by all parties
+- [ ] Cross-team dependencies have explicit SLAs
+- [ ] Communication cadence is defined (architecture reviews, contract reviews)
+- [ ] Each team can deploy independently without breaking others
+- [ ] Integration tests cover cross-team boundaries
