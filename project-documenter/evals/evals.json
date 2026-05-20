@@ -44,6 +44,110 @@
         "Agent scans codebase before writing (reads files, not just guessing)",
         "Output is structured for a NEW developer, not a stakeholder or manager"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "Docs project ini udah outdated. Gw udah ganti dari REST ke GraphQL dan nambah Redis buat caching. Update aja docs yang ada, jangan bikin ulang.",
+      "expected_output": "Should follow Incremental Update Protocol: read existing docs, scan changed code, present diff of what needs updating, confirm scope, then patch only affected sections.",
+      "files": [],
+      "expectations": [
+        "Agent reads existing documentation files first before making changes",
+        "Agent scans the codebase to identify GraphQL and Redis usage",
+        "Agent presents a diff or summary of what sections need updating",
+        "Agent asks for confirmation before making changes",
+        "Agent updates only affected sections, not rewriting the entire document",
+        "Agent flags if other docs (API docs, handoff) are also affected by the change",
+        "Agent does NOT rewrite unchanged sections"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "We're at MVP stage with a SaaS product. What documentation should I create first? We have 2 devs and launching in 3 weeks.",
+      "expected_output": "Should reference Phase-Based Documentation Priority. Recommend MVP-phase docs (Technical Docs, API Docs, Getting Started) as priority. Should ask about current state of docs before creating.",
+      "files": [],
+      "expectations": [
+        "Agent identifies this as MVP phase and recommends appropriate priority docs",
+        "Agent recommends Technical Documentation and API Documentation as must-haves",
+        "Agent recommends Getting Started / Handoff doc for the 2-dev team",
+        "Agent does NOT recommend enterprise-level docs (ADRs, Runbooks, SLA docs) as priority",
+        "Agent asks what docs already exist before creating new ones",
+        "Agent offers to create docs in priority order (red priority first)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Buat POC report. Kita mau buktiin ke investor bahwa AI recommendation engine kita bisa handle 50k requests per menit. Hasilnya udah ada di benchmark logs.",
+      "expected_output": "Should produce a POC Report with executive summary containing the conclusion, actual benchmark numbers from logs, clear recommendation. Should ask about format (PDF/Word) and where to save.",
+      "files": [],
+      "expectations": [
+        "Agent asks about output format (PDF, Word, Markdown)",
+        "Agent asks where to save or deliver the report",
+        "Agent reads benchmark logs to extract actual performance numbers",
+        "Executive Summary contains the conclusion (pass/fail against 50k RPM target)",
+        "Results section includes actual numbers, not vague 'acceptable performance'",
+        "Recommendation is a clear yes/no/conditional, not 'further analysis needed'",
+        "Report is written for investors (non-technical language for summary, technical in appendix)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I already used the product-architect skill to plan this project. Now I need technical documentation. The PRD is in docs/prd.md and architecture is in docs/architecture.md.",
+      "expected_output": "Should follow Cross-Skill Integration protocol: read existing PRD and architecture docs first, use them as base, then scan codebase for implementation details. Should NOT re-invent what's already documented.",
+      "files": [],
+      "expectations": [
+        "Agent reads docs/prd.md and docs/architecture.md BEFORE scanning codebase",
+        "Agent acknowledges existing planning artifacts and uses them as base",
+        "Agent does NOT re-document decisions already captured in architecture doc",
+        "Agent adds implementation-specific details that code reveals but planning docs don't",
+        "If code contradicts architecture doc, agent flags the conflict and asks user",
+        "Output references and links to existing planning docs rather than duplicating content"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Create a deployment guide for our Kubernetes-based microservices app. We have 5 services, each with its own Dockerfile, deployed to AWS EKS with Terraform.",
+      "expected_output": "Should scan for Dockerfiles, Terraform configs, k8s manifests, and CI/CD configs. Should produce a deployment guide with actual commands, infrastructure topology diagram, and environment-specific instructions.",
+      "files": [],
+      "expectations": [
+        "Agent scans for Dockerfiles, terraform files, k8s manifests, and CI/CD configs",
+        "Agent asks about environments (dev, staging, prod) and which to document",
+        "Output includes actual deployment commands that are copy-pasteable",
+        "Output includes infrastructure diagram (Mermaid or ASCII)",
+        "Prerequisites section lists exact tool versions needed",
+        "Rollback procedure is included with specific steps",
+        "Environment variables and secrets management is documented",
+        "Agent does NOT produce generic 'deploy to cloud' instructions"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Bikin changelog dari commit history. Last release v1.2.0 sampe sekarang. Format yang user-friendly ya, bukan developer log.",
+      "expected_output": "Should read git log or commit history, categorize changes (Added, Changed, Fixed, Removed), and write user-facing descriptions. Should ask about version number for new release.",
+      "files": [],
+      "expectations": [
+        "Agent reads git log or commit history to extract changes",
+        "Agent asks what version number to assign the new release",
+        "Changes are categorized (Added, Changed, Fixed, Removed, Breaking)",
+        "Descriptions are user-facing, not commit messages ('Invoice PDF now includes tax breakdown' not 'fix: add tax to pdf render')",
+        "Breaking changes include migration steps",
+        "Agent does NOT pad with fake improvements or manufactured changes",
+        "Output follows Keep a Changelog format or similar standard"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Document this project but I'm in a hurry. Just pick whatever format works and save it somewhere sensible. It's for our internal team.",
+      "expected_output": "Should still confirm goal (Step 1) and scope (Step 4) as minimum confirmation bar, but can use sensible defaults for format and destination. Should NOT skip all confirmations just because user said 'hurry'.",
+      "files": [],
+      "expectations": [
+        "Agent still asks about purpose/goal even though user is in a hurry",
+        "Agent uses sensible defaults for format (Markdown) and location (docs/ folder)",
+        "Agent still presents a scope outline for approval before writing",
+        "Agent does NOT skip codebase scanning",
+        "Agent does NOT produce lower quality output just because user is rushed",
+        "Agent mentions the defaults it chose: 'I'll create Markdown in docs/ — OK?'",
+        "Steps 2 and 3 use defaults but Steps 1 and 4 are still confirmed"
+      ]
     }
   ]
 }

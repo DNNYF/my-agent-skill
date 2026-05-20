@@ -320,6 +320,205 @@ Every step with CONFIRM or CHECK requires user input before proceeding.
 
 ---
 
+## Document Lifecycle & Maintenance
+
+Documentation rots faster than code. A doc written at MVP launch is misleading by the time you hit 10 users if nobody updates it. This section defines when and how to maintain docs.
+
+### Document States
+
+Every document has a lifecycle state:
+
+| State | Meaning | Action |
+|-------|---------|--------|
+| **Current** | Reflects the actual codebase | None — it's good |
+| **Stale** | Code has changed, doc hasn't caught up | Update affected sections |
+| **Obsolete** | Feature removed or completely rewritten | Archive or delete |
+| **Draft** | Not yet reviewed/confirmed | Mark clearly as DRAFT |
+
+### When to Update vs Rewrite
+
+**Update** (patch specific sections) when:
+- A dependency version changed
+- An endpoint was added/modified
+- A config value changed
+- A new feature was added to an existing module
+
+**Rewrite** (start fresh) when:
+- Architecture fundamentally changed (monolith → microservices)
+- Tech stack swap (React → Svelte, REST → GraphQL)
+- The document is more than 60% stale
+- The audience changed (was for devs, now for stakeholders)
+
+### Staleness Signals
+
+When scanning a project that already has docs, check for staleness:
+- `package.json` dependencies don't match what docs describe
+- File paths referenced in docs don't exist
+- API endpoints documented don't match route files
+- Environment variables listed don't match `.env.example`
+
+If you detect staleness, tell the user: "I found existing docs but they're out of date — [specific mismatches]. Want me to update them or start fresh?"
+
+### Versioning Convention
+
+For projects with multiple doc versions:
+- Use date stamps in frontmatter: `last_updated: 2025-05-20`
+- For major rewrites, keep the old version as `docs/archive/overview-v1.md`
+- Changelog docs are append-only — never rewrite history
+
+---
+
+## Phase-Based Documentation Priority
+
+Not every document matters at every stage. Writing a full deployment guide during ideation is waste. Here's what to produce when:
+
+### Phase 1: Ideation / Planning
+
+| Priority | Document | Why |
+|----------|----------|-----|
+| 🔴 Must | Project Overview (1-pager) | Align team on what we're building |
+| 🔴 Must | Technical Architecture (draft) | Validate feasibility before coding |
+| 🟡 Nice | Data Model sketch | Catch schema issues early |
+
+**Source**: If product-architect skill was used, pull from its PRD and architecture output. Don't re-invent.
+
+### Phase 2: MVP Development
+
+| Priority | Document | Why |
+|----------|----------|-----|
+| 🔴 Must | Technical Documentation | Devs need to understand the system they're building |
+| 🔴 Must | API Documentation | Frontend/backend contract |
+| 🔴 Must | Getting Started / Handoff | Any new dev can run the project in 5 min |
+| 🟡 Nice | Database Documentation | If schema is complex (>10 tables) |
+| 🟡 Nice | Deployment Guide (basic) | At least "how to deploy" in README |
+
+### Phase 3: Launch / Growth
+
+| Priority | Document | Why |
+|----------|----------|-----|
+| 🔴 Must | Deployment Guide (full) | Ops team needs this |
+| 🔴 Must | Handoff Document (complete) | Team is growing |
+| 🔴 Must | Changelog | Users need to know what changed |
+| 🟡 Nice | Status Reports | Stakeholder communication |
+| 🟡 Nice | POC Reports (for new features) | Validate before building |
+
+### Phase 4: Enterprise / Scale
+
+| Priority | Document | Why |
+|----------|----------|-----|
+| 🔴 Must | All of the above, kept current | Stale docs = onboarding hell |
+| 🔴 Must | Architecture Decision Records (ADRs) | Why we chose X over Y — institutional memory |
+| 🔴 Must | Runbook / Incident Response | Production issues need documented procedures |
+| 🔴 Must | Security Documentation | Compliance, audits, pen-test reports |
+| 🟡 Nice | SLA Documentation | If serving external clients |
+| 🟡 Nice | Integration Guides | For third-party developers |
+
+### How to Use This
+
+When a user asks "document this project," ask what phase they're in:
+- "Is this an MVP, a launched product, or enterprise-scale? I'll prioritize which docs to create first."
+
+Then produce documents in priority order (🔴 first), confirming scope before each one.
+
+---
+
+## Cross-Skill Integration
+
+This skill works best when combined with other skills in the ecosystem. Here's how to leverage prior work:
+
+### From Product Architect → Documenter
+
+If the product-architect skill was used to plan the project, these artifacts already exist:
+- **PRD** → Use as source for Project Overview (don't rewrite — adapt)
+- **Technical Architecture** → Use as base for Technical Documentation (add implementation details)
+- **Data Models** → Use as base for Database Documentation (add actual field types, constraints)
+- **API Specs** → Use as base for API Documentation (add real response examples from running code)
+- **User Flows** → Use in Handoff Document's "How Things Work" section
+
+**Protocol**: Before scanning the codebase from scratch, check if architecture/planning docs exist in the project (look for `docs/`, `architecture/`, `prd.md`, `ARCHITECTURE.md`, `specs/`). If found, read them first — they contain decisions and rationale that code alone doesn't reveal.
+
+### From Frontend Design → Documenter
+
+If the frontend-design skill was used:
+- **Design tokens** → Reference in Technical Documentation (don't re-document, link to source)
+- **Component patterns** → Use in Handoff Document's component section
+
+### Documenter → Other Skills
+
+Documentation produced here feeds back:
+- **Changelog** → Informs product-architect's next iteration planning
+- **Known Issues / Tech Debt** → Input for sprint planning
+- **Architecture docs** → Reference for future frontend-design decisions
+
+### Integration Protocol
+
+```
+1. Check for existing planning/architecture artifacts
+2. If found: "I see existing [PRD/architecture/specs] in [location].
+   I'll use these as a base and add implementation details from the
+   actual code. OK?"
+3. If not found: proceed with full codebase scan as normal
+4. Never contradict existing architecture docs without flagging:
+   "The architecture doc says X, but the code does Y. Which is
+   correct — should I update the docs or flag this as tech debt?"
+```
+
+---
+
+## Incremental Update Protocol
+
+Most documentation work is updates, not creation. This protocol handles "the API changed, update the docs" without rewriting everything.
+
+### Trigger
+
+User says things like:
+- "Update the docs" / "Docs are outdated"
+- "I added a new endpoint, update the API docs"
+- "We switched from X to Y, fix the docs"
+- "Add [feature] to the documentation"
+
+### Protocol
+
+```
+1. READ existing docs — understand current state
+2. SCAN changed code — identify what's different
+3. DIFF — present what needs to change:
+   "I found these differences between docs and code:
+   - [section]: docs say X, code does Y
+   - [section]: new feature Z not documented
+   - [section]: removed feature W still documented
+   Want me to update all of these, or just specific ones?"
+4. CONFIRM scope of update
+5. PATCH — update only affected sections, preserve everything else
+6. VERIFY — run slop test on updated sections only
+```
+
+### Rules for Incremental Updates
+
+- **Never rewrite unchanged sections.** If the auth section is still accurate, don't touch it.
+- **Preserve voice and style.** If existing docs use a certain tone, match it. Don't introduce a different writing style in updated sections.
+- **Update timestamps.** Add/update `last_updated` in frontmatter or footer.
+- **Flag cascading changes.** If updating the data model section, check if API docs and handoff docs also reference the old model. Tell the user: "This change also affects [other docs]. Want me to update those too?"
+- **Show diffs when possible.** For small changes, show before/after. For large changes, show a summary of what will change.
+
+### Handling Conflicts
+
+If existing docs contradict the code:
+```
+I found a conflict:
+- Docs say: "Auth uses JWT tokens stored in localStorage"
+- Code shows: "Auth uses HTTP-only session cookies via NextAuth"
+
+Which is correct?
+1. Code is correct → I'll update the docs
+2. Docs are correct → the code might have a bug (flag for review)
+3. Both are partially right → explain and I'll write the accurate version
+```
+
+Never silently resolve conflicts. Always surface them.
+
+---
+
 ## Additional Resources
 
 ### Reference Files
@@ -327,3 +526,4 @@ Every step with CONFIRM or CHECK requires user input before proceeding.
 - **`references/document-types.md`** — Templates and structure for each document type with field-by-field guidance
 - **`references/platform-guide.md`** — Platform-specific instructions for Notion, Jira, Canva, and local file output
 - **`references/anti-slop-docs.md`** — Expanded documentation anti-slop patterns with before/after rewrites
+- **`references/diagram-patterns.md`** — Mermaid diagram patterns for architecture, sequence, ER, deployment, state, and flowchart diagrams
